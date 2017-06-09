@@ -1,0 +1,49 @@
+﻿@model PLMvc.Models.UserViewModel
+
+@{ 
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="profile-head">
+        <div class="profiles container thumbnail">
+            <div class="col-md-4 col-sm-3 col-xs-5">
+                <div class="row">
+                    <div class="text-center">
+                        @if (Model.Avatar != null)
+                        {
+                            <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(Model.Avatar))" width="200" height="200" class="avatar img-circle img-thumbnail" alt="avatar" />
+                        }
+                        else {
+                            <img src="~/Images/default-avatar.png" width="200" height="200" class="avatar img-circle img-thumbnail" alt="avatar">
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-9">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>@Model.Surname @Model.Name (@Model.UserName)</h4>
+                        <hr />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 col-xs-6">
+                        <p>Date Of Birth</p>
+                        <p>About myself</p>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-6">
+                        <p>@Model.DateOfBirth.Year (@ViewBag.Age лет)</p>
+                        <p>@Model.Description</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--profile-head close-->
+</div>
+@if (User.Identity.Name == Model.UserName)
+{
+    <button type="button" class="btn btn-primary btn-lg">@Html.ActionLink("Add photo", "CreatePhoto", "Home")</button>
+}
+
+@Html.Action("ShowPhotos", new { Id = Model.Id })
+
