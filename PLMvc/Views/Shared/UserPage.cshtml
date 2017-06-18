@@ -1,0 +1,56 @@
+﻿@model PLMvc.Models.UserPhotoViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="profile-head">
+        <div class="profiles container thumbnail">
+            <div class="col-md-4 col-sm-3 col-xs-12">
+                <div class="row">
+                        @if (Model.User.Avatar != null)
+                        {
+                            <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(Model.User.Avatar))" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="avatar" />
+                        }
+                        else {
+                            <img src="~/Images/default-avatar.png" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="avatar">
+                        }
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>@Model.User.Surname @Model.User.Name (@Model.User.UserName)</h4>
+                        <hr />
+                    </div>
+
+                    <div class="col-md-3 col-sm-4 col-xs-4">
+                        <p>Date Of Birth</p>
+                        <p>About myself</p>
+                    </div>
+                    <div class="col-md-3 col-sm-4 col-xs-4">
+                        <p>@Model.User.DateOfBirth.Day.@Model.User.DateOfBirth.Month.@Model.User.DateOfBirth.Year</p>
+                        <p>@Model.User.Description</p>
+                    </div>
+                    <div class="col-md-6 col-sm-4 col-xs-4">
+                        <div class="text-center">
+                            @if (User.Identity.Name == Model.User.UserName)
+                            {
+                                using (Html.BeginForm("CreatePhoto", "Photo", FormMethod.Get))
+                                {
+                                    <div class="text-center">
+                                        <input type="submit" class="btn btn-lg btn-primary" value="Add photo" />
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--profile-head close-->
+</div>
+
+@Html.Partial("_Photos", Model.Photos)
+@*@Html.Action("ShowPhotos", "Photo", new { Id = Model.Id, page = TempData["page"] })*@

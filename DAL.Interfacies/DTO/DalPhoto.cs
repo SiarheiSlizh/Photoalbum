@@ -15,5 +15,6 @@ namespace DAL.Interfacies.DTO
         public int NumberOfLikes { get; set; }
         public DateTime DateOfLoading { get; set; }
         public int UserId { get; set; }
+        public ICollection<DalComment> dalComments { get; set; }
     }
 }

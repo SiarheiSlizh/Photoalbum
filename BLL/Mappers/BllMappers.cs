@@ -42,6 +42,16 @@ namespace BLL.Mappers
             };
         }
 
+        public static IEnumerable<BllUser> MapToBll(this IEnumerable<DalUser> dalUsers)
+        {
+            var bllUsers = new List<BllUser>();
+
+            foreach (var dalUser in dalUsers)
+                bllUsers.Add(dalUser.ToBllUser());
+
+            return bllUsers;
+        }
+
         public static BllRole ToBllRole(this DalRole dalRole)
         {
             return new BllRole
@@ -150,6 +160,16 @@ namespace BLL.Mappers
             };
         }
 
+        public static IEnumerable<BllLike> MapToBll(this IEnumerable<DalLike> dalLikes)
+        {
+            var bllLikes = new List<BllLike>();
+
+            foreach (var dalLike in dalLikes)
+                bllLikes.Add(dalLike.ToBllLike());
+
+            return bllLikes;
+        }
+
         public static BllComment ToBllComment(this DalComment dalComment)
         {
             return new BllComment()
@@ -172,6 +192,16 @@ namespace BLL.Mappers
                 PhotoId = bllComment.PhotoId,
                 UserId = bllComment.UserId
             };
+        }
+
+        public static IEnumerable<BllComment> MapToBll(this IEnumerable<DalComment> dalComments)
+        {
+            var bllComments = new List<BllComment>();
+
+            foreach (var dalComment in dalComments)
+                bllComments.Add(dalComment.ToBllComment());
+
+            return bllComments;
         }
     }
 }

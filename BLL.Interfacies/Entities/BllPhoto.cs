@@ -15,5 +15,7 @@ namespace BLL.Interfacies.Entities
         public int NumberOfLikes { get; set; }
         public DateTime DateOfLoading { get; set; }
         public int UserId { get; set; }
+
+        public ICollection<BllComment> bllComments { get; set; }
     }
 }

@@ -10,12 +10,13 @@ namespace DAL.Concrete
 {
     public class AlbumRepository : IAlbumRepository
     {
+        #region stubs
         public void Create(DalAlbum e)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(DalAlbum e)
+        public void Delete(int key)
         {
             throw new NotImplementedException();
         }
@@ -29,5 +30,6 @@ namespace DAL.Concrete
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

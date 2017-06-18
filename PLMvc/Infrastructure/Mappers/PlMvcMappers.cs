@@ -41,6 +41,16 @@ namespace PLMvc.Infrastructure.Mappers
             };
         }
 
+        public static IEnumerable<UserViewModel> MapToMvc(this IEnumerable<BllUser> bllUsers)
+        {
+            var userViewModel = new List<UserViewModel>();
+
+            foreach (var bllUser in bllUsers)
+                userViewModel.Add(bllUser.ToMvcUser());
+
+            return userViewModel;
+        }
+
         public static BllRole ToBllRole(this RoleViewModel roleViewModel)
         {
             return new BllRole
@@ -149,6 +159,16 @@ namespace PLMvc.Infrastructure.Mappers
             };
         }
 
+        public static IEnumerable<LikeViewModel> MapToMvc(this IEnumerable<BllLike> bllLikes)
+        {
+            var likesViewModel = new List<LikeViewModel>();
+
+            foreach (var bllLike in bllLikes)
+                likesViewModel.Add(bllLike.ToMvcLike());
+
+            return likesViewModel;
+        }
+
         public static BllComment ToBllComment(this CommentViewModel commentViewModel)
         {
             return new BllComment()
@@ -171,6 +191,16 @@ namespace PLMvc.Infrastructure.Mappers
                 PhotoId = bllComment.PhotoId,
                 UserId = bllComment.UserId
             };
+        }
+
+        public static IEnumerable<CommentViewModel> MapToMvc(this IEnumerable<BllComment> bllComments)
+        {
+            var commentsViewModel = new List<CommentViewModel>();
+
+            foreach (var bllComment in bllComments)
+                commentsViewModel.Add(bllComment.ToMvcComment());
+
+            return commentsViewModel;
         }
 
         public static BllUser ToBllUser(this ProfileViewModel profile)

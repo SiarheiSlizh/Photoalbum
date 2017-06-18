@@ -12,6 +12,6 @@ namespace DAL.Interfacies.Repository
         IEnumerable<TEntity> GetAll();
         TEntity GetById(int key);
         void Create(TEntity e);
-        void Delete(TEntity e);
+        void Delete(int key);
     }
 }

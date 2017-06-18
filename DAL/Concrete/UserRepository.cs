@@ -20,20 +20,36 @@ namespace DAL.Concrete
             this.context = context;
         }
 
-        public bool CheckUserWithEmail(string email) => context.Set<User>().Any(e => e.Email == email);
+        public bool CheckUserWithEmail(string email)
+        {
+            return context.Set<User>()
+                .Any(e => e.Email == email);
+        }
 
-        public bool CheckUserWithUsername(string userName) => context.Set<User>().Any(e => e.UserName == userName);
+        public bool CheckUserWithUsername(string userName)
+        {
+            return context.Set<User>()
+                .Any(e => e.UserName == userName);
+        }
         
         public void CreateUser(DalUser dalUser, int roleId)
         {
-            var role = context.Set<Role>().FirstOrDefault(r => r.RoleId == roleId);
+            var role = context.Set<Role>()
+                .FirstOrDefault(r => r.RoleId == roleId);
             
             var user = dalUser.ToOrmUser();
 
-            if (!ReferenceEquals(role,null))
+            if (!ReferenceEquals(role, null))
                 user.Roles.Add(role);
 
             context.Set<User>().Add(user);
+        }
+
+        public DalUser GetById(int userId)
+        {
+            return context.Set<User>()
+                .FirstOrDefault(u => u.UserId == userId)
+                ?.ToDalUser();
         }
 
         public string[] GetRolesForUser(string userName)
@@ -47,42 +63,69 @@ namespace DAL.Concrete
             return roles;
         }
 
+        public IEnumerable<DalUser> GetUsersBySubsrting(int pageSize, int page, string substring)
+        {
+            return context.Set<User>()
+                .Where(u => u.UserName.Contains(substring))
+                .OrderBy(u => u.UserId).Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .MapToDal();
+        }
+
         public DalUser GetUserByUserName(string userName)
         {
-            var user = context.Set<User>().FirstOrDefault(u => u.UserName == userName);
-
-            if (ReferenceEquals(user, null))
-                return null;
-
-            return user.ToDalUser();
+            return context.Set<User>()
+                .FirstOrDefault(u => u.UserName == userName)
+                ?.ToDalUser();
         }
 
         public void Update(DalUser dalUser)
         {
-            var user = context.Set<User>().FirstOrDefault(u => u.UserName == dalUser.UserName);
+            var user = context.Set<User>()
+                .FirstOrDefault(u => u.UserName == dalUser.UserName);
 
             user.Email = dalUser.Email;
             user.Surname = dalUser.Surname;
             user.Name = dalUser.Name;
             user.Password = dalUser.Password;
-            user.DateOfBirth = dalUser.DateOfBirth;
             user.Description = dalUser.Description;
             user.Avatar = dalUser.Avatar;
         }
 
-        //public DalUser GetUserByUserNameAndEmail(string userName, string email)
-        //{
-        //    var user = context.Set<User>().FirstOrDefault(u => u.UserName == userName);
+        public int CountBySubstring(string substring)
+        {
+            return context.Set<User>()
+                .Where(u => u.UserName.Contains(substring))
+                .Count();
+        }
 
-        //    if (ReferenceEquals(user, null) || (!ReferenceEquals(user,null) && user.Email != email))
-        //        return null;
+        public IEnumerable<DalUser> GetUserBySubstring(string substring)
+        {
+            return context.Set<User>()
+                .Where(u => u.UserName.Contains(substring))
+                .MapToDal();
+        }
 
-        //    return new DalUser()
-        //    {
-        //        Id = user.UserId,
-        //        UserName = user.UserName,
-        //        Email = user.Email,
-        //    };
-        //}
+        public IEnumerable<DalUser> GetAll()
+        {
+            return context.Set<User>()
+                .ToList()
+                .Select(u => u.ToDalUser());
+        }
+
+        public void Delete(int key)
+        {
+            var user = context.Set<User>()
+                .FirstOrDefault(u => u.UserId == key);
+
+            context.Set<User>().Remove(user);
+        }
+
+        #region stubs
+        public void Create(DalUser e)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

@@ -1,0 +1,9 @@
+﻿@using PLMvc.Infrastructure;
+@model PLMvc.Models.PagingModels.UsersPaging
+
+@{
+    ViewBag.Title = "Search";
+}
+<div id="updateSearch" class="profiles container thumbnail">
+    @Html.Partial("_Search", Model)
+</div>

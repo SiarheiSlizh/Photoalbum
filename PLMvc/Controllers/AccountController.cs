@@ -42,10 +42,8 @@ namespace PLMvc.Controllers
             if (ModelState.IsValid)
             {
                 if (Membership.ValidateUser(login.UserName, login.Password))
-                //Проверяет учетные данные пользователя и управляет параметрами пользователей
                 {
                     FormsAuthentication.SetAuthCookie(login.UserName, login.RememberMe);
-                    //Управляет службами проверки подлинности с помощью форм для веб-приложений
                     if (Url.IsLocalUrl(returnUrl))
                         return Redirect(returnUrl);
                     else
@@ -135,7 +133,7 @@ namespace PLMvc.Controllers
         [HttpGet]
         public ActionResult EditProfile()
         {
-            var profile = userService.GetUserByUserName(HttpContext.User.Identity.Name).ToMvcProfile();
+            ProfileViewModel profile = userService.GetUserByUserName(User.Identity.Name).ToMvcProfile();
             
             return View(profile);
         }
@@ -145,7 +143,7 @@ namespace PLMvc.Controllers
         public ActionResult EditProfile(ProfileViewModel profile, HttpPostedFileBase upload)
         {
             profile.UserName = HttpContext.User.Identity.Name;
-            var user = userService.GetUserByUserName(HttpContext.User.Identity.Name);
+            var user = userService.GetUserByUserName(User.Identity.Name);
             if (!ReferenceEquals(upload, null))
             {
                 using (var binaryreader = new BinaryReader(upload.InputStream))

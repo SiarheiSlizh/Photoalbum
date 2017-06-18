@@ -1,4 +1,5 @@
 ﻿using DAL.Interfacies.DTO;
+using DAL.Mappers;
 using ORM.Entities;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,17 @@ namespace DAL.Mappers
                 Description = user.Description
             };
         }
+
+        public static IEnumerable<DalUser> MapToDal(this IQueryable<User> users)
+        {
+            var dalUsers = new List<DalUser>();
+
+            foreach (var user in users)
+                dalUsers.Add(user.ToDalUser());
+
+            return dalUsers;
+        }
+
 
         public static Role ToOrmRole(this DalRole dalRole)
         {
@@ -150,6 +162,16 @@ namespace DAL.Mappers
             };
         }
 
+        public static IEnumerable<DalLike> MapToDal(this IQueryable<Like> likes)
+        {
+            var dalLikes = new List<DalLike>();
+
+            foreach (var like in likes)
+                dalLikes.Add(like.ToDalLike());
+
+            return dalLikes;
+        }
+
         public static Comment ToOrmComment(this DalComment dalComment)
         {
             return new Comment()
@@ -172,6 +194,16 @@ namespace DAL.Mappers
                 PhotoId = comment.PhotoId,
                 UserId = comment.UserId
             };
+        }
+
+        public static IEnumerable<DalComment> MapToDal(this IQueryable<Comment> comments)
+        {
+            var dalComments = new List<DalComment>();
+
+            foreach (var comment in comments)
+                dalComments.Add(comment.ToDalComment());
+
+            return dalComments;
         }
     }
 }

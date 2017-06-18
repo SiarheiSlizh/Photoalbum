@@ -5,29 +5,61 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Interfacies.DTO;
 using DAL.Interfacies.Repository;
+using System.Data.Entity;
+using ORM.Entities;
+using DAL.Mappers;
 
 namespace DAL.Concrete
 {
     public class LikeRepository : ILikeRepository
     {
-        public void Create(DalLike e)
+        private readonly DbContext context;
+
+        public LikeRepository(DbContext context)
         {
-            throw new NotImplementedException();
+            this.context = context;
+        }
+        
+        public void Create(DalLike dalLike)
+        {
+            context.Set<Like>()
+                .Add(dalLike.ToOrmLike());
         }
 
-        public void Delete(DalLike e)
+        public void Delete(int key)
         {
-            throw new NotImplementedException();
+            var like = context.Set<Like>()
+                .FirstOrDefault(l => l.LikeId == key);
+
+            context.Set<Like>().Remove(like);
         }
 
         public IEnumerable<DalLike> GetAll()
         {
-            throw new NotImplementedException();
+            return context.Set<Like>()
+                .ToList()
+                .Select(l => l.ToDalLike());
         }
 
         public DalLike GetById(int key)
         {
-            throw new NotImplementedException();
+            return context.Set<Like>()
+                .FirstOrDefault(l => l.LikeId == key)
+                ?.ToDalLike();
+        }
+
+        public IEnumerable<DalLike> GetByPhotoId(int photoId)
+        {
+            return context.Set<Like>()
+                .Where(l => l.PhotoId == photoId)
+                .MapToDal();
+        }
+
+        public DalLike GetUserLike(int photoId, int userId)
+        {
+            return context.Set<Like>()
+                .FirstOrDefault(l => l.PhotoId == photoId && l.UserId == userId)
+                ?.ToDalLike();
         }
     }
 }

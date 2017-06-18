@@ -1,0 +1,11 @@
+﻿@model PLMvc.Models.PhotoViewModel
+
+
+@using (Ajax.BeginForm("ChangeLikes", new { photoId = Model.Id }, new AjaxOptions { UpdateTargetId = "updateLikes", InsertionMode = InsertionMode.Replace, HttpMethod = "GET" }))
+{
+    <label for="like" class="btn btn-default"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span> @Model.NumberOfLikes
+        <input type="submit" id="like" name="like" class="hidden"/>
+    </label>
+}
+
+

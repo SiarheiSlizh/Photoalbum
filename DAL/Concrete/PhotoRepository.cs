@@ -13,43 +13,74 @@ namespace DAL.Concrete
 {
     public class PhotoRepository : IPhotoRepository
     {
-        public DbContext context;
+        private readonly DbContext context;
 
         public PhotoRepository(DbContext context)
         {
             this.context = context;
         }
 
-        public void Create(DalPhoto dalPhoto)
+        public int CountByUserId(int userId)
         {
-            var photo = dalPhoto.ToOrmPhoto();
-
-            context.Set<Photo>().Add(photo);
+            return context.Set<Photo>()
+                .Where(p=>p.UserId == userId)
+                .Count();
         }
 
-        public void Delete(DalPhoto dalPhoto)
+        public void Create(DalPhoto dalPhoto)
         {
-            throw new NotImplementedException();
+            context.Set<Photo>()
+                .Add(dalPhoto.ToOrmPhoto());
+        }
+        
+        public void ChangeNumberOfLikes(int photoId, bool isUserLike)
+        {
+            var photo = context.Set<Photo>()
+                .FirstOrDefault(p => p.PhotoId == photoId);
+
+            if (isUserLike)
+                photo.NumberOfLikes--;
+            else
+                photo.NumberOfLikes++;
+        }
+
+        public void Delete(int key)
+        {
+            var photo = context.Set<Photo>()
+                .FirstOrDefault(p => p.PhotoId == key);
+
+            context.Set<Photo>().Remove(photo);
         }
 
         public IEnumerable<DalPhoto> GetAll()
         {
-            throw new NotImplementedException();
+            return context.Set<Photo>()
+                .ToList()
+                .Select(p => p.ToDalPhoto());
         }
 
         public IEnumerable<DalPhoto> GetAllByUserId(int UserId)
         {
-            var photos = context.Set<Photo>().Where(p => p.UserId == UserId);
-
-            if (ReferenceEquals(photos, null))
-                return null;
-
-            return photos.MapToDal();
+            return context.Set<Photo>()
+                .Where(p => p.UserId == UserId)
+                .MapToDal();
         }
 
         public DalPhoto GetById(int key)
         {
-            throw new NotImplementedException();
+            return context.Set<Photo>()
+                .FirstOrDefault(p => p.PhotoId == key)
+                ?.ToDalPhoto();
+        }
+
+        public IEnumerable<DalPhoto> GetByPaging(int pageSize, int page, int userId)
+        {
+            return context.Set<Photo>()
+                .Where(p => p.UserId == userId)
+                .OrderBy(p => p.PhotoId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .MapToDal();
         }
     }
 }

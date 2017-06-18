@@ -1,0 +1,43 @@
+﻿@using PLMvc.Infrastructure;
+@model PLMvc.Models.PagingModels.UsersPaging
+
+<h2>Search result</h2>
+<hr />
+@if (Model.Users.Count() != 0)
+{
+    <div>
+        @foreach (var user in Model.Users)
+        {
+            <div class="row">
+                @if (user.Avatar == null)
+                { 
+                    <div class="col-md-3">
+                        <img src="~/Images/default-avatar.png" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="avatar" />
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-3">
+                        <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(user.Avatar))" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="image" />
+                    </div>
+                }
+                <div class="col-md-7">
+                    <h3>@user.UserName</h3>
+                </div>
+                <div class="col-md-2">
+                    <a href="@Url.Action("ShowUser", "Home", new { userId = user.Id })">
+                        <label for="user" class="btn btn-large btn-primary">
+                            Show
+                            <input type="button" class="hidden" />
+                        </label>
+                    </a>
+                </div>
+            </div>
+        }
+        @Html.PageLinks(Model.PageInfo, page => Url.Action("PagingUsers", "Home", new { page, searchText = Model.SearchText }), new AjaxOptions() { UpdateTargetId = "updateSearch" })
+    </div>
+}
+else
+{
+    <h2>User with with username doesn't exist</h2>
+}

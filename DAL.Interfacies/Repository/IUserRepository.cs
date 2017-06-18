@@ -7,11 +7,13 @@ using DAL.Interfacies.DTO;
 
 namespace DAL.Interfacies.Repository
 {
-    public interface IUserRepository 
+    public interface IUserRepository : IRepository<DalUser>
     {
         DalUser GetUserByUserName(string userName);
-        //DalUser GetUserByUserNameAndEmail(string userName, string email);
+        IEnumerable<DalUser> GetUsersBySubsrting(int pageSize, int page, string substring);
         void CreateUser(DalUser dalUser, int roleId);
+        int CountBySubstring(string substring);
+        IEnumerable<DalUser> GetUserBySubstring(string substring);
         string[] GetRolesForUser(string userName);
         bool CheckUserWithEmail(string email);
         bool CheckUserWithUsername(string userName);

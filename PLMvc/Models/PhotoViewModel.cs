@@ -14,5 +14,7 @@ namespace PLMvc.Models
         public int NumberOfLikes { get; set; }
         public DateTime DateOfLoading { get; set; }
         public int UserId { get; set; }
+
+        public ICollection<CommentViewModel> Comments { get; set; }
     }
 }

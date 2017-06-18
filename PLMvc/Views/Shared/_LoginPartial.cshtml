@@ -1,5 +1,17 @@
 ﻿@if (Request.IsAuthenticated)
 {
+    <ul class="nav navbar-nav">
+        <li>@Html.ActionLink("My page", "Index", "Home")</li>
+        <li>
+            <div class="nav-collapse">
+                @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "form-search", style = "padding-top:4%" }))
+                {
+                    <input type="text" class="input-medium search-query" id="searchText" name="searchText" placeholder="Search">
+                    <button type="submit" class="btn btn-sm">Search</button>
+                }
+            </div>@*data-autocomplete-source='@Url.Action("AutocompleteSearch", "Home")'*@
+        </li>
+    </ul>
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
@@ -17,5 +29,19 @@ else
     <ul class="nav navbar-nav navbar-right">
         <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
         <li>@Html.ActionLink("Log In", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
-    </ul> 
+    </ul>
 }
+
+<script type="text/javascript">
+        //$(function () {
+        //    $("[data-autocomplete-source]").each(function () {
+        //        var target = $(this);
+        //        target.autocomplete({ source: target.attr("data-autocomplete-source") });
+        //    });
+        //});
+    $(function () {
+        $("#searchText").autocomplete({
+            source: '@Url.Action("AutocompleteSearch", "Home")'
+        });
+    });
+</script>

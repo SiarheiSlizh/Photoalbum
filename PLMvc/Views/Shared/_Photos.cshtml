@@ -1,0 +1,39 @@
+﻿@using PLMvc.Models;
+@using PLMvc.Infrastructure;
+@*@model PagedList.IPagedList<PhotoViewModel>*@
+@model PhotosPaging
+
+<div id="update">    
+    @if (Model.PageInfo.TotalItems != 0)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-center">
+                    <h3 class="page-header">All photos</h3>
+                </div>
+            </div>
+        </div>
+       
+        <div class="row">
+            <div class="profiles container thumbnail">
+                @foreach (var photo in Model.Photos)
+                {
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <a href="@Url.Action("PhotoDetails", "Photo", new { photoId = ((PhotoViewModel)photo).Id })">
+                            <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(photo.Image))" class="img-responsive" alt="avatar" />
+                        </a>
+                        <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>@photo.NumberOfLikes
+                        @*<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>@photo.NumberOfComments*@
+                        
+                    </div>
+                }
+            </div>
+            @Html.PageLinks(Model.PageInfo, page => Url.Action("PagingPhotos", "Photo", new { page, userId = Model.Photos.FirstOrDefault().UserId }),
+         new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "update" })
+        </div>
+    }
+    else
+    {
+        <p>While you have no photos.</p>
+    }
+</div>

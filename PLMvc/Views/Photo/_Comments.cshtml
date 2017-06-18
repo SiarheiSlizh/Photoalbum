@@ -1,0 +1,23 @@
+﻿@using PLMvc.Models;
+@using PLMvc.Infrastructure;
+@model CommentsPaging
+
+<div>
+    @if (Model.PageInfo.TotalItems != 0)
+    {
+        <div class="row">
+            <div class="profiles container thumbnail">
+            @foreach (var comment in Model.Comments)
+            {
+                @Html.Action("GetUserByComment", new { comm = comment, page = Model.PageInfo.PageNumber })
+            }
+        </div>
+        @Html.PageLinks(Model.PageInfo, page => Url.Action("PagingComments", new { page, photoId = Model.Comments.FirstOrDefault().PhotoId }),
+        new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "updateComments" })
+    </div>
+    }
+    else
+    {
+        <h3>This photo has no comments.</h3>
+    }
+</div>

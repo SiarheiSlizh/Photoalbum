@@ -11,9 +11,12 @@ namespace BLL.Interfacies.Services
     {
         bool CheckUserWithEmail(string email);
         bool CheckUserWithUserName(string userName);
+        int CountBySubstring(string substring);
         void CreateUser(BllUser bllUser, int roleId);
+        BllUser GetById(int userId);
         BllUser GetUserByUserName(string userName);
-        //BllUser GetUserByUserNameAndEmail(string userName, string email);
+        IEnumerable<BllUser> GetUsersBySubsrting(int pageSize, int page, string substring);
+        IEnumerable<BllUser> GetUserBySubstring(string substring);
         string[] GetRolesForUser(string username);
         void Update(BllUser user);
     }

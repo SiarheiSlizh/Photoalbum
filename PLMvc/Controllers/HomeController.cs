@@ -7,6 +7,8 @@ using System.Web;
 using System.Web.Mvc;
 using PLMvc.Infrastructure.Mappers;
 using System.IO;
+using PagedList;
+using PLMvc.Models.PagingModels;
 
 namespace PLMvc.Controllers
 {
@@ -26,75 +28,90 @@ namespace PLMvc.Controllers
         public ActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
-            {
                 return RedirectToAction("UserPage");
-            }
             else
                 return View();
-        }
-
-        [HttpGet]
-        public ActionResult CreatePhoto()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreatePhoto(PhotoViewModel photo, HttpPostedFileBase upload)
-        {
-            if(ReferenceEquals(upload,null))
-            {
-                ModelState.AddModelError("", "Photo haven't been loaded yet");
-            }
-
-            if (ModelState.IsValid) 
-            {
-                using (var binaryreader = new BinaryReader(upload.InputStream))
-                {
-                    photo.Image = binaryreader.ReadBytes(upload.ContentLength);
-                }
-                var user = userService.GetUserByUserName(HttpContext.User.Identity.Name);
-                photo.UserId = user.Id;
-                photo.DateOfLoading = DateTime.Now;
-                photoService.Create(photo.ToBllPhoto());
-                return RedirectToAction("UserPage");
-            }
-            return View(photo);
         }
 
         public ActionResult UserPage()
         {
             var user = userService.GetUserByUserName(HttpContext.User.Identity.Name).ToMvcUser();
-            int age = DateTime.Now.Year - user.DateOfBirth.Year;
-            if (DateTime.Now.Month < user.DateOfBirth.Month || (DateTime.Now.Month == user.DateOfBirth.Month && DateTime.Now.Day < user.DateOfBirth.Day))
-                age--;
+            var photos = photoService.GetByPaging(3, 1, user.Id)?.MapToMvc();
+            var count = photoService.CountByUserId(user.Id);
+            var pageInfo = new PageInfo { PageNumber = 1, PageSize = 3, TotalItems = count };
+            var paging = new PhotosPaging { PageInfo = pageInfo, Photos = photos };
 
-            ViewBag.Age = age;
-            return View(user);
+            var mainPage = new UserPhotoViewModel
+            {
+                User = user,
+                Photos = paging
+            };
+            
+            return View(mainPage);
         }
 
-        [ChildActionOnly]
-        public ActionResult ShowPhotos(int Id)
+        #region Search
+        public ActionResult Search(string searchText)
         {
-            var user = userService.GetUserByUserName(HttpContext.User.Identity.Name);
-            var photos = photoService.GetAllByUserId(user.Id).MapToMvc();
-            ViewBag.UserName = user.UserName;
-            return PartialView("_Photos", photos);
-        }
+            var users = userService.GetUsersBySubsrting(2, 1, searchText)?.MapToMvc();
+            var countUsers = userService.CountBySubstring(searchText);
+            var userPageInfo = new PageInfo { PageNumber = 1, PageSize = 2, TotalItems = countUsers };
 
-        public ActionResult About()
+            var usersList = new UsersPaging
+            {
+                Users = users,
+                PageInfo = userPageInfo,
+                SearchText = searchText
+            };
+
+            return View("SearchAuxillary", usersList);
+        }
+        
+        [HttpGet]
+        public ActionResult PagingUsers(string searchText, int page = 1)
         {
-            ViewBag.Message = "Your application description page.";
+            var users = userService.GetUsersBySubsrting(2, page, searchText)?.MapToMvc();
+            var countUsers = userService.CountBySubstring(searchText);
+            var userPageInfo = new PageInfo { PageNumber = page, PageSize = 2, TotalItems = countUsers };
 
-            return View();
+            var usersList = new UsersPaging
+            {
+                Users = users,
+                PageInfo = userPageInfo,
+                SearchText = searchText
+            };
+
+            if (Request.IsAjaxRequest())
+                return PartialView("_Search", usersList);
+
+            return View("SearchAuxillary", usersList);
         }
 
-        public ActionResult Contact()
+        public ActionResult ShowUser(int userId)
         {
-            ViewBag.Message = "Your contact page.";
+            var user = userService.GetById(userId)?.ToMvcUser();
+            var photos = photoService.GetByPaging(3, 1, userId)?.MapToMvc();
+            var count = photoService.CountByUserId(userId);
+            var pageInfo = new PageInfo { PageNumber = 1, PageSize = 3, TotalItems = count };
+            var paging = new PhotosPaging { PageInfo = pageInfo, Photos = photos };
 
-            return View();
+            var mainPage = new UserPhotoViewModel
+            {
+                User = user,
+                Photos = paging
+            };
+
+            return View("UserPage", mainPage);
         }
+
+        public ActionResult AutocompleteSearch(string term)
+        {
+            var users = userService.GetUserBySubstring(term)
+                ?.MapToMvc()
+                .Select(u => new { value = u.UserName });
+            
+            return Json(users, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
     }
 }

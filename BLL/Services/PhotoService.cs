@@ -27,19 +27,36 @@ namespace BLL.Services
             uow.Commit();
         }
 
-        public void Delete(BllPhoto photo)
+        public void Delete(int key)
         {
-            throw new NotImplementedException();
+            photoRepository.Delete(key);
+            uow.Commit();
         }
 
         public IEnumerable<BllPhoto> GetAllByUserId(int userId)
         {
-            var photos = photoRepository.GetAllByUserId(userId);
+            return photoRepository.GetAllByUserId(userId)?.MapToBll();
+        }
 
-            if (ReferenceEquals(photos, null))
-                return null;
-            else
-                return photos.MapToBll();
+        public IEnumerable<BllPhoto> GetByPaging(int pageSize, int page, int userId)
+        {
+            return photoRepository.GetByPaging(pageSize, page, userId)?.MapToBll();
+        }
+
+        public BllPhoto GetById(int key)
+        {
+            return photoRepository.GetById(key)?.ToBllPhoto();
+        }
+
+        public int CountByUserId(int userId)
+        {
+            return photoRepository.CountByUserId(userId);
+        }
+
+        public void ChangeNumberOfLikes(int photoId, bool isUserLike)
+        {
+            photoRepository.ChangeNumberOfLikes(photoId, isUserLike);
+            uow.Commit();
         }
     }
 }

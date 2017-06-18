@@ -21,14 +21,25 @@ namespace BLL.Services
             this.userRepository = userRepository;
         }
 
-        public bool CheckUserWithEmail(string email) => userRepository.CheckUserWithEmail(email);
+        public bool CheckUserWithEmail(string email)
+        {
+            return userRepository.CheckUserWithEmail(email);
+        }
 
-        public bool CheckUserWithUserName(string userName) => userRepository.CheckUserWithUsername(userName);
-        
+        public bool CheckUserWithUserName(string userName)
+        {
+            return userRepository.CheckUserWithUsername(userName);
+        }
+
         public void CreateUser(BllUser bllUser, int roleId)
         {
             userRepository.CreateUser(bllUser.ToDalUser(), roleId);
             uow.Commit();
+        }
+
+        public BllUser GetById(int userId)
+        {
+            return userRepository.GetById(userId)?.ToBllUser();
         }
 
         public string[] GetRolesForUser(string username)
@@ -36,14 +47,14 @@ namespace BLL.Services
             return userRepository.GetRolesForUser(username);
         }
 
+        public IEnumerable<BllUser> GetUsersBySubsrting(int pageSize, int page, string substring)
+        {
+            return userRepository.GetUsersBySubsrting(pageSize, page, substring)?.MapToBll();
+        }
+
         public BllUser GetUserByUserName(string userName)
         {
-            var user = userRepository.GetUserByUserName(userName);
-
-            if (ReferenceEquals(user, null))
-                return null;
-            else
-                return user.ToBllUser();
+            return userRepository.GetUserByUserName(userName)?.ToBllUser();
         }
 
         public void Update(BllUser user)
@@ -52,14 +63,14 @@ namespace BLL.Services
             uow.Commit();
         }
 
-        //public BllUser GetUserByUserNameAndEmail(string userName, string email)
-        //{
-        //    var user = userRepository.GetUserByUserNameAndEmail(userName, email);
+        public int CountBySubstring(string substring)
+        {
+            return userRepository.CountBySubstring(substring);
+        }
 
-        //    if (ReferenceEquals(user, null))
-        //        return null;
-        //    else
-        //        return user.ToBllUser();
-        //}
+        public IEnumerable<BllUser> GetUserBySubstring(string substring)
+        {
+            return userRepository.GetUserBySubstring(substring)?.MapToBll();
+        }
     }
 }
