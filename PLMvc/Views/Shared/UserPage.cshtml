@@ -21,7 +21,7 @@
             <div class="col-md-8 col-sm-8 col-xs-12">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4>@Model.User.Surname @Model.User.Name (@Model.User.UserName)</h4>
+                        <h3>@Model.User.Surname @Model.User.Name (@Model.User.UserName)</h3>
                         <hr />
                     </div>
 
@@ -53,4 +53,3 @@
 </div>
 
 @Html.Partial("_Photos", Model.Photos)
-@*@Html.Action("ShowPhotos", "Photo", new { Id = Model.Id, page = TempData["page"] })*@

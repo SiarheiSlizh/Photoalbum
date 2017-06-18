@@ -9,7 +9,7 @@
                     <input type="text" class="input-medium search-query" id="searchText" name="searchText" placeholder="Search">
                     <button type="submit" class="btn btn-sm">Search</button>
                 }
-            </div>@*data-autocomplete-source='@Url.Action("AutocompleteSearch", "Home")'*@
+            </div>
         </li>
     </ul>
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))

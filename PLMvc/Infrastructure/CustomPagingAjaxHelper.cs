@@ -19,8 +19,7 @@ namespace PLMvc.Infrastructure
             {
                 TagBuilder tag = new TagBuilder("a");
                 tag.MergeAttribute("href", pageUrl(i));
-                if(!ReferenceEquals(ajaxOptions, null))
-                    tag.MergeAttributes((ajaxOptions ?? new AjaxOptions()).ToUnobtrusiveHtmlAttributes());
+                tag.MergeAttributes((ajaxOptions ?? new AjaxOptions()).ToUnobtrusiveHtmlAttributes());
 
                 tag.InnerHtml = i.ToString();
                 if (i == pageInfo.PageNumber)
