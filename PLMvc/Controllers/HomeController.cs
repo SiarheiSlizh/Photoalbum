@@ -93,7 +93,7 @@ namespace PLMvc.Controllers
         {
             var user = userService.GetById(userId)?.ToMvcUser();
 
-            if (ReferenceEquals(user, null))
+            if (user == null)
                 return HttpNotFound();
 
             var photos = photoService.GetByPaging(photoPageSize, 1, userId).MapToMvc();

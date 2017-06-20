@@ -39,7 +39,7 @@ namespace DAL.Concrete
             
             var user = dalUser.ToOrmUser();
 
-            if (!ReferenceEquals(role, null))
+            if (role != null)
                 user.Roles.Add(role);
 
             context.Set<User>().Add(user);
@@ -54,7 +54,8 @@ namespace DAL.Concrete
 
         public string[] GetRolesForUser(string userName)
         {
-            var user = context.Set<User>().FirstOrDefault(u => u.UserName == userName);
+            var user = context.Set<User>()
+                .FirstOrDefault(u => u.UserName == userName);
             
             string[] roles = new string[user.Roles.Count];
             for (int i = 0; i < user.Roles.Count; i++)

@@ -41,11 +41,8 @@ namespace PLMvc.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreatePhoto(PhotoViewModel photo, HttpPostedFileBase upload)
         {
-            if (ReferenceEquals(upload, null))
+            if (upload == null)
                 ModelState.AddModelError("", "Photo haven't been loaded yet");
-
-            if (upload.ContentLength > 4000)
-                ModelState.AddModelError("", "The size of the picture exceeds 4000 bytes");
 
             if (ModelState.IsValid)
             {
@@ -106,7 +103,7 @@ namespace PLMvc.Controllers
         {
             var photo = photoService.GetById(photoId)?.ToMvcPhoto();
 
-            if (ReferenceEquals(photo, null))
+            if (photo == null)
                 return HttpNotFound();
 
             var user = userService.GetById(photo.UserId)?.ToMvcUser();
@@ -231,7 +228,7 @@ namespace PLMvc.Controllers
             var user = userService.GetUserByUserName(User.Identity.Name)?.ToMvcUser();
             var like = likeService.GetUserLike(photoId, user.Id);
 
-            if (ReferenceEquals(like, null)) 
+            if (like == null) 
             {
                 photoService.ChangeNumberOfLikes(photoId, false);
                 var newLike = new LikeViewModel() { PhotoId = photoId, UserId = user.Id };

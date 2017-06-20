@@ -26,7 +26,7 @@ namespace PLMvc.Providers
         {
             MembershipUser membershipUser = GetUser(userName, false);
 
-            if (!ReferenceEquals(membershipUser, null))
+            if (membershipUser != null)
                 return null;
 
             var user = new UserViewModel()
@@ -50,7 +50,7 @@ namespace PLMvc.Providers
         {
             var user = UserService.GetUserByUserName(username);
 
-            if (!ReferenceEquals(user, null) && Crypto.VerifyHashedPassword(user.Password, password))
+            if (user != null && Crypto.VerifyHashedPassword(user.Password, password))
                 return true;
             else
                 return false;
@@ -60,7 +60,7 @@ namespace PLMvc.Providers
         {
             var user = UserService.GetUserByUserName(userName);
 
-            if (ReferenceEquals(user, null))
+            if (user == null)
                 return null;
 
             var memberUser = new MembershipUser("CustomMembershipProvider", user.UserName,
