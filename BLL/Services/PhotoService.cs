@@ -56,7 +56,7 @@ namespace BLL.Services
         /// <returns>photos</returns>
         public IEnumerable<BllPhoto> GetAllByUserId(int userId)
         {
-            return photoRepository.GetAllByUserId(userId)?.MapToBll();
+            return photoRepository.GetAllByUserId(userId).MapToBll();
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace BLL.Services
         /// <returns>photos</returns>
         public IEnumerable<BllPhoto> GetByPaging(int pageSize, int page, int userId)
         {
-            return photoRepository.GetByPaging(pageSize, page, userId)?.MapToBll();
+            return photoRepository.GetByPaging(pageSize, page, userId).MapToBll();
         }
 
         /// <summary>

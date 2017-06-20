@@ -36,12 +36,7 @@ namespace BLL.Services
         /// <returns>role entity on BLL</returns>
         public BllRole GetById(int key)
         {
-            var role = roleRepository.GetById(key);
-
-            if (ReferenceEquals(role, null))
-                return null;
-            else
-                return role.ToBllRole();
+            return roleRepository.GetById(key)?.ToBllRole();
         }
 
         /// <summary>

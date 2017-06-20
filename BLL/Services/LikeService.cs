@@ -56,7 +56,7 @@ namespace BLL.Services
         /// <returns>likes</returns>
         public IEnumerable<BllLike> GetByPhotoId(int photoId)
         {
-            return likeRepository.GetByPhotoId(photoId)?.MapToBll();
+            return likeRepository.GetByPhotoId(photoId).MapToBll();
         }
 
         /// <summary>

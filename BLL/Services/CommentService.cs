@@ -36,7 +36,7 @@ namespace BLL.Services
         /// <returns>comments</returns>
         public IEnumerable<BllComment> GetAllByPhotoId(int photoId)
         {
-            return commentRepository.GetAllByPhotoId(photoId)?.MapToBll();
+            return commentRepository.GetAllByPhotoId(photoId).MapToBll();
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace BLL.Services
         /// <returns>comments</returns>
         public IEnumerable<BllComment> GetByPaging(int pageSize, int page, int photoId)
         {
-            return commentRepository.GetByPaging(pageSize, page, photoId)?.MapToBll();
+            return commentRepository.GetByPaging(pageSize, page, photoId).MapToBll();
         }
         #endregion
     }

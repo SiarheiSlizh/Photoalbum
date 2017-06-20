@@ -89,7 +89,7 @@ namespace BLL.Services
         /// <returns>users</returns>
         public IEnumerable<BllUser> GetUsersBySubsrting(int pageSize, int page, string substring)
         {
-            return userRepository.GetUsersBySubsrting(pageSize, page, substring)?.MapToBll();
+            return userRepository.GetUsersBySubsrting(pageSize, page, substring).MapToBll();
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace BLL.Services
         /// <returns>users</returns>
         public IEnumerable<BllUser> GetUserBySubstring(string substring)
         {
-            return userRepository.GetUserBySubstring(substring)?.MapToBll();
+            return userRepository.GetUserBySubstring(substring).MapToBll();
         }
         #endregion
     }

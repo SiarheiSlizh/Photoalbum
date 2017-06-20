@@ -43,7 +43,10 @@ namespace PLMvc.Controllers
         {
             if (ReferenceEquals(upload, null))
                 ModelState.AddModelError("", "Photo haven't been loaded yet");
-    
+
+            if (upload.ContentLength > 4000)
+                ModelState.AddModelError("", "The size of the picture exceeds 4000 bytes");
+
             if (ModelState.IsValid)
             {
                 using (var binaryreader = new BinaryReader(upload.InputStream))
@@ -64,7 +67,7 @@ namespace PLMvc.Controllers
         {
             var user = userService.GetUserByUserName(User.Identity.Name)?.ToMvcUser();
             photoService.Delete(photoId);
-            var photos = photoService.GetByPaging(photoPageSize, 1, user.Id)?.MapToMvc();
+            var photos = photoService.GetByPaging(photoPageSize, 1, user.Id).MapToMvc();
             var count = photoService.CountByUserId(user.Id);
             var pageInfo = new PageInfo { PageNumber = 1, PageSize = photoPageSize, TotalItems = count };
             var paging = new PhotosPaging { PageInfo = pageInfo, Photos = photos };
@@ -81,7 +84,7 @@ namespace PLMvc.Controllers
         [HttpGet]
         public ActionResult PagingPhotos(int userId, int page = 1)
         {
-            var user = userService.GetById(userId).ToMvcUser();
+            var user = userService.GetById(userId)?.ToMvcUser();
             var photos = photoService.GetByPaging(photoPageSize, page, userId).MapToMvc();
             var count = photoService.CountByUserId(userId);
             var pageInfo = new PageInfo { PageNumber = page, PageSize = photoPageSize, TotalItems = count };
@@ -102,8 +105,12 @@ namespace PLMvc.Controllers
         public ActionResult PhotoDetails(int photoId)
         {
             var photo = photoService.GetById(photoId)?.ToMvcPhoto();
+
+            if (ReferenceEquals(photo, null))
+                return HttpNotFound();
+
             var user = userService.GetById(photo.UserId)?.ToMvcUser();
-            var comments = commentService.GetByPaging(commentPageSize, 1, photoId)?.MapToMvc();
+            var comments = commentService.GetByPaging(commentPageSize, 1, photoId).MapToMvc();
             var count = commentService.CountByPhotoId(photoId);
             var pageInfo = new PageInfo { PageNumber = 1, PageSize = commentPageSize, TotalItems = count };
             var paging = new CommentsPaging { PageInfo = pageInfo, Comments = comments };
@@ -122,17 +129,13 @@ namespace PLMvc.Controllers
         #region comments
         public ActionResult CreateComment(int photoId, string comment, int page)
         {
-            var user = userService.GetUserByUserName(User.Identity.Name).ToMvcUser();
-
-            if (!string.IsNullOrEmpty(comment))
-            {
-                var comm = new CommentViewModel() { PhotoId = photoId, Description = comment, UserId = user.Id, DateOfSending = DateTime.Now };
-                commentService.Create(comm.ToBllComment());
-            }
+            var user = userService.GetUserByUserName(User.Identity.Name)?.ToMvcUser();
+            var comm = new CommentViewModel() { PhotoId = photoId, Description = comment, UserId = user.Id, DateOfSending = DateTime.Now };
+            commentService.Create(comm.ToBllComment());
             
             var count = commentService.CountByPhotoId(photoId);
             page = (int)Math.Ceiling((double)count / commentPageSize);//define page
-            var comments = commentService.GetByPaging(commentPageSize, page, photoId)?.MapToMvc();
+            var comments = commentService.GetByPaging(commentPageSize, page, photoId).MapToMvc();
 
             var pageInfo = new PageInfo { PageNumber = page, PageSize = commentPageSize, TotalItems = count };
             var paging = new CommentsPaging { PageInfo = pageInfo, Comments = comments };
@@ -161,7 +164,7 @@ namespace PLMvc.Controllers
             if (count % commentPageSize == 0 && commentPageSize * page > count && page != 1)//define page
                 page--;
 
-            var comments = commentService.GetByPaging(commentPageSize, page, photoId)?.MapToMvc();
+            var comments = commentService.GetByPaging(commentPageSize, page, photoId).MapToMvc();
             var pageInfo = new PageInfo { PageNumber = page, PageSize = commentPageSize, TotalItems = count };
             var paging = new CommentsPaging { PageInfo = pageInfo, Comments = comments };
 
@@ -199,7 +202,7 @@ namespace PLMvc.Controllers
         [HttpGet]
         public ActionResult PagingComments(int photoId, int page = 1)
         {
-            var comments = commentService.GetByPaging(commentPageSize, page, photoId)?.MapToMvc();
+            var comments = commentService.GetByPaging(commentPageSize, page, photoId).MapToMvc();
             var count = commentService.CountByPhotoId(photoId);
             var pageInfo = new PageInfo { PageNumber = page, PageSize = commentPageSize, TotalItems = count };
             var paging = new CommentsPaging { PageInfo = pageInfo, Comments = comments };
@@ -208,7 +211,7 @@ namespace PLMvc.Controllers
                 return PartialView("_Comments", paging);
 
             var photo = photoService.GetById(photoId)?.ToMvcPhoto();
-            var user = userService.GetById(photo.UserId).ToMvcUser();
+            var user = userService.GetById(photo.UserId)?.ToMvcUser();
 
             var photoDetail = new PhotoCommentViewModel
             {
@@ -246,7 +249,7 @@ namespace PLMvc.Controllers
                 return PartialView("_likes", photo);
             
             user = userService.GetById(photo.UserId)?.ToMvcUser();
-            var comments = commentService.GetByPaging(commentPageSize, 1, photoId)?.MapToMvc();
+            var comments = commentService.GetByPaging(commentPageSize, 1, photoId).MapToMvc();
             var count = commentService.CountByPhotoId(photoId);
             var pageInfo = new PageInfo { PageNumber = 1, PageSize = commentPageSize, TotalItems = count };
             var paging = new CommentsPaging { PageInfo = pageInfo, Comments = comments };

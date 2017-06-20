@@ -146,9 +146,13 @@ namespace PLMvc.Controllers
             var user = userService.GetUserByUserName(User.Identity.Name);
             if (!ReferenceEquals(upload, null))
             {
-                using (var binaryreader = new BinaryReader(upload.InputStream))
-                {
-                    profile.Avatar = binaryreader.ReadBytes(upload.ContentLength);
+                if (upload.ContentLength > 4000)
+                    ModelState.AddModelError("", "The size of the picture exceeds 4000 bytes");
+                else {
+                    using (var binaryreader = new BinaryReader(upload.InputStream))
+                    {
+                        profile.Avatar = binaryreader.ReadBytes(upload.ContentLength);
+                    }
                 }
             }
             else

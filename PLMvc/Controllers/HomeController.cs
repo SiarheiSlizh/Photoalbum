@@ -55,7 +55,7 @@ namespace PLMvc.Controllers
         #region Search
         public ActionResult Search(string searchText)
         {
-            var users = userService.GetUsersBySubsrting(searchPageSize, 1, searchText)?.MapToMvc();
+            var users = userService.GetUsersBySubsrting(searchPageSize, 1, searchText).MapToMvc();
             var countUsers = userService.CountBySubstring(searchText);
             var userPageInfo = new PageInfo { PageNumber = 1, PageSize = searchPageSize, TotalItems = countUsers };
 
@@ -72,7 +72,7 @@ namespace PLMvc.Controllers
         [HttpGet]
         public ActionResult PagingUsers(string searchText, int page = 1)
         {
-            var users = userService.GetUsersBySubsrting(searchPageSize, page, searchText)?.MapToMvc();
+            var users = userService.GetUsersBySubsrting(searchPageSize, page, searchText).MapToMvc();
             var countUsers = userService.CountBySubstring(searchText);
             var userPageInfo = new PageInfo { PageNumber = page, PageSize = searchPageSize, TotalItems = countUsers };
 
@@ -92,7 +92,11 @@ namespace PLMvc.Controllers
         public ActionResult ShowUser(int userId)
         {
             var user = userService.GetById(userId)?.ToMvcUser();
-            var photos = photoService.GetByPaging(photoPageSize, 1, userId)?.MapToMvc();
+
+            if (ReferenceEquals(user, null))
+                return HttpNotFound();
+
+            var photos = photoService.GetByPaging(photoPageSize, 1, userId).MapToMvc();
             var count = photoService.CountByUserId(userId);
             var pageInfo = new PageInfo { PageNumber = 1, PageSize = photoPageSize, TotalItems = count };
             var paging = new PhotosPaging { PageInfo = pageInfo, Photos = photos };
@@ -109,7 +113,7 @@ namespace PLMvc.Controllers
         public ActionResult AutocompleteSearch(string term)
         {
             var users = userService.GetUserBySubstring(term)
-                ?.MapToMvc()
+                .MapToMvc()
                 .Select(u => new { value = u.UserName });
             
             return Json(users, JsonRequestBehavior.AllowGet);
