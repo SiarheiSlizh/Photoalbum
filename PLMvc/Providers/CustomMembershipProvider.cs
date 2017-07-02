@@ -14,11 +14,8 @@ namespace PLMvc.Providers
     public class CustomMembershipProvider : MembershipProvider
     {
         #region prop
-        public IUserService UserService
-            => (IUserService)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(IUserService));
-
-        public IRoleService RoleService
-            => (IRoleService)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(IRoleService));
+        public IAccountService AccountService
+            => (IAccountService)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(IAccountService));
         #endregion
 
         #region methods
@@ -39,8 +36,8 @@ namespace PLMvc.Providers
                 DateOfBirth = dateOfBirth
             };
 
-            var role = RoleService.GetAll().FirstOrDefault(r => r.Name == "User");
-            UserService.CreateUser(user.ToBllUser(), role.Id);
+            var role = AccountService.GetAll().FirstOrDefault(r => r.Name == "User");
+            AccountService.CreateUser(user.ToBllUser(), role.Id);
             membershipUser = GetUser(userName, false);
 
             return membershipUser;
@@ -48,7 +45,7 @@ namespace PLMvc.Providers
 
         public override bool ValidateUser(string username, string password)
         {
-            var user = UserService.GetUserByUserName(username);
+            var user = AccountService.GetUserByUserName(username);
 
             if (user != null && Crypto.VerifyHashedPassword(user.Password, password))
                 return true;
@@ -58,7 +55,7 @@ namespace PLMvc.Providers
         
         public override MembershipUser GetUser(string userName, bool userIsOnline)
         {
-            var user = UserService.GetUserByUserName(userName);
+            var user = AccountService.GetUserByUserName(userName);
 
             if (user == null)
                 return null;

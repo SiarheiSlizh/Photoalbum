@@ -19,7 +19,7 @@
                 else
                 {
                     <div class="col-md-3">
-                        <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(user.Avatar))" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="image" />
+                        <img src="@Url.Action("GetAvatar", "Photo", new { id = user.Id })" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="image" />
                     </div>
                 }
                 <div class="col-md-7" style = "padding-top:1%">

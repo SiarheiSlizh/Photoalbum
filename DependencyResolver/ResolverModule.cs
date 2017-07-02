@@ -26,12 +26,8 @@ namespace DependencyResolver
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>().InRequestScope();
             kernel.Bind<DbContext>().To<PhotoalbumContext>().InRequestScope();
 
-            kernel.Bind<IUserService>().To<UserService>();
-            kernel.Bind<IRoleService>().To<RoleService>();
-            kernel.Bind<IAlbumService>().To<AlbumService>();
+            kernel.Bind<IAccountService>().To<AccountService>();
             kernel.Bind<IPhotoService>().To<PhotoService>();
-            kernel.Bind<ICommentService>().To<CommentService>();
-            kernel.Bind<ILikeService>().To<LikeService>();
 
             kernel.Bind<IUserRepository>().To<UserRepository>();
             kernel.Bind<IRoleRepository>().To<RoleRepository>();

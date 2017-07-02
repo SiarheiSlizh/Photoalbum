@@ -1,4 +1,5 @@
 ﻿using BLL.Interfacies.Entities;
+using BLL.Interfacies.PagingModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,24 @@ namespace BLL.Interfacies.Services
 {
     public interface IPhotoService
     {
-        void ChangeNumberOfLikes(int photoId, bool isUserLike);
-        IEnumerable<BllPhoto> GetAllByUserId(int userId);
-        IEnumerable<BllPhoto> GetByPaging(int pageSize, int page, int userId);
+        #region photo
         BllPhoto GetById(int key);
         void Create(BllPhoto photo);
         void Delete(int key);
-        int CountByUserId(int userId);
+        #endregion
+        
+        #region comment
+        void CreateComment(BllComment bllComment);
+        void DeleteComment(int key);
+        #endregion
+
+        #region like
+        void ChangeNumberOfLikes(int photoId, int userId);
+        #endregion
+
+        #region paging
+        BllCommentsPaging GetCommentsPaging(int photoId, int pageSize, int page, bool? definePage);
+        BllPhotosPaging GetPhotosPaging(int userId, int pageSize, int page);
+        #endregion
     }
 }

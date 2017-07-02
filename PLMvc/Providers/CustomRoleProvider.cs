@@ -11,28 +11,25 @@ namespace PLMvc.Providers
     public class CustomRoleProvider : RoleProvider
     {
         #region prop
-        public IUserService UserService
-            => (IUserService)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(IUserService));
-
-        public IRoleService RoleService
-            => (IRoleService)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(IRoleService));
+        public IAccountService AccountService
+            => (IAccountService)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(IAccountService));
         #endregion
 
         #region methods
         public override bool IsUserInRole(string username, string roleName)
         {
-            return RoleService.IsUserInRole(username, roleName);
+            return AccountService.IsUserInRole(username, roleName);
         }
 
         public override void CreateRole(string roleName)
         {
             var role = new BllRole() { Name = roleName };
-            RoleService.CreateRole(role);
+            AccountService.CreateRole(role);
         }
 
         public override string[] GetRolesForUser(string username)
         {
-            return UserService.GetRolesForUser(username);
+            return AccountService.GetRolesForUser(username);
         }
         #endregion
 

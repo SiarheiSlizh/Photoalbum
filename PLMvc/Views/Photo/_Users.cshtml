@@ -6,7 +6,7 @@
             <a href="@Url.Action("ShowUser", "Home", new { userId = Model.User.Id })">
                 @if (Model.User.Avatar != null)
                 {
-                    <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(Model.User.Avatar))" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="avatar">
+                    <img src="@Url.Action("GetAvatar", "Photo", new { id = Model.User.Id })" class="avatar img-circle img-thumbnail" style="margin-left: 30%; width: 40%" alt="avatar">
                 }
                 else
                 {

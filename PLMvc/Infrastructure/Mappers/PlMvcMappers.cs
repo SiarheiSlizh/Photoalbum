@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using BLL.Interfacies.Entities;
 using PLMvc.Models;
+using BLL.Interfacies.PagingModels;
 
 namespace PLMvc.Infrastructure.Mappers
 {
@@ -231,6 +232,34 @@ namespace PLMvc.Infrastructure.Mappers
                 DateOfBirth = bllUser.DateOfBirth,
                 Avatar = bllUser.Avatar,
                 Description = bllUser.Description
+            };
+        }
+
+        public static PageInfo ToMvcPageInfo (this BllPageInfo bllPageInfo)
+        {
+            return new PageInfo()
+            {
+                PageNumber = bllPageInfo.PageNumber,
+                PageSize = bllPageInfo.PageSize,
+                TotalItems = bllPageInfo.TotalItems
+            };
+        }
+
+        public static CommentsPaging ToMvcCommentsPaging (this BllCommentsPaging commentsPaing)
+        {
+            return new CommentsPaging()
+            {
+                Comments = commentsPaing.BllComments.MapToMvc(),
+                PageInfo = commentsPaing.BllPageInfo.ToMvcPageInfo()
+            };
+        }
+
+        public static PhotosPaging ToMvcPhotosPaging (this BllPhotosPaging photosPaging)
+        {
+            return new PhotosPaging()
+            {
+                Photos = photosPaging.BllPhotos.MapToMvc(),
+                PageInfo = photosPaging.BllPageInfo.ToMvcPageInfo()
             };
         }
     }

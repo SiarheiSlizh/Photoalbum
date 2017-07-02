@@ -13,12 +13,12 @@
         <div class="row">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="text-center">
-                     <img src="~/Images/empty.jpg" class="img-responsive" alt="avatar"/>
+                     <img src="~/Images/empty.jpg" class="img-responsive" alt="avatar" id="image"/>
                     <p><br /></p>
                     <div>
                         <label for="upload" class="btn btn-large btn-primary">
                             Upload
-                            <input type="file" id="upload" name="upload" class="hidden" />
+                            <input type="file" accept="image/*" id="upload" name="upload" class="hidden" />
                         </label>
                     </div>
                 </div>
@@ -45,3 +45,31 @@
     </div>
   
 }
+
+<script type="text/javascript">
+    function readURL(input) {
+        var file = input.files[0];
+        var size = 2097152;
+        
+        function errMsg(x) {
+            alert(x);
+        }
+
+        if (file.size > size) {
+            errMsg('Size of the photo can\'t be larger than 2 Mb');
+            return false;
+        } else if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#image').attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#upload").change(function () {
+        readURL(this);
+    });
+</script>

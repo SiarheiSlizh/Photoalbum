@@ -19,11 +19,11 @@ namespace PLMvc.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
 
-        public AccountController(IUserService userService)
+        public AccountController(IAccountService accountService)
         {
-            this.userService = userService;
+            this.accountService = accountService;
         }
 
         [HttpGet]
@@ -82,14 +82,14 @@ namespace PLMvc.Controllers
                     return View(register);
                 }
 
-                bool anyUsername = userService.CheckUserWithUserName(register.UserName);
+                bool anyUsername = accountService.CheckUserWithUserName(register.UserName);
                 if (anyUsername)
                 {
                     ModelState.AddModelError("UserName", "User with this UserName has already registered");
                     return View(register);
                 }
 
-                bool anyEmail = userService.CheckUserWithEmail(register.Email);
+                bool anyEmail = accountService.CheckUserWithEmail(register.Email);
                 if(anyEmail)
                 {
                     ModelState.AddModelError("Email", "User with this email address has already registered.");
@@ -133,7 +133,7 @@ namespace PLMvc.Controllers
         [HttpGet]
         public ActionResult EditProfile()
         {
-            ProfileViewModel profile = userService.GetUserByUserName(User.Identity.Name).ToMvcProfile();
+            ProfileViewModel profile = accountService.GetUserByUserName(User.Identity.Name).ToMvcProfile();
             
             return View(profile);
         }
@@ -143,7 +143,7 @@ namespace PLMvc.Controllers
         public ActionResult EditProfile(ProfileViewModel profile, HttpPostedFileBase upload)
         {
             profile.UserName = HttpContext.User.Identity.Name;
-            var user = userService.GetUserByUserName(User.Identity.Name);
+            var user = accountService.GetUserByUserName(User.Identity.Name);
             if (upload != null)
             {
                 using (var binaryreader = new BinaryReader(upload.InputStream))
@@ -156,7 +156,7 @@ namespace PLMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                bool anyEmail = userService.CheckUserWithEmail(profile.Email);
+                bool anyEmail = accountService.CheckUserWithEmail(profile.Email);
                 if (string.Compare(profile.Email, user.Email, true) != 0)
                 {
                     if (anyEmail)
@@ -169,7 +169,7 @@ namespace PLMvc.Controllers
                     profile.Password = user.Password;
                 else profile.Password = Crypto.HashPassword(profile.Password);
                 
-                userService.Update(profile.ToBllUser());
+                accountService.Update(profile.ToBllUser());
             }
             else
                 return View(profile);

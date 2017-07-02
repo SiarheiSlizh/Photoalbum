@@ -20,7 +20,7 @@
                 {
                     <div class="col-md-4 col-sm-6 col-xs-12">
                         <a href="@Url.Action("PhotoDetails", "Photo", new { photoId = ((PhotoViewModel)photo).Id })">
-                            <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(photo.Image))" class="img-responsive" alt="avatar" />
+                            <img src="@Url.Action("GetImage", "Photo", new { id = photo.Id })" class="img-responsive" alt="avatar" />
                         </a>
                         <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>@photo.NumberOfLikes
                     </div>

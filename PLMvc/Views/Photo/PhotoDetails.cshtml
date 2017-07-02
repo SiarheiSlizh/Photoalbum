@@ -8,7 +8,8 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="text-center">
-                    <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(Model.Photo.Image))" class="img-responsive" alt="image" />
+                    
+                    <img src="@Url.Action("GetImage", "Photo", new { id = Model.Photo.Id })" class="img-responsive" alt="image" />
                     <div id="updateLikes">
                         @Html.Partial("_Likes", Model.Photo)
                     </div>
@@ -32,11 +33,11 @@
             }
         </div>
         @using (Ajax.BeginForm("CreateComment", new { photoId = Model.Photo.Id, page = Model.CommentPaging.PageInfo.PageNumber },
-        new AjaxOptions { UpdateTargetId = "updateComments", InsertionMode = InsertionMode.Replace }))
+        new AjaxOptions { UpdateTargetId = "updateComments", InsertionMode = InsertionMode.Replace, OnBegin = "OnBegin" }))
         {
             <div class="row">
                 <div class="col-md-12">
-                    @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control", @id = "update" } })
+                    @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control", @id = "updateArea" } })
                 </div>
             </div>
             <div class="row">
@@ -55,14 +56,8 @@
     @Html.Partial("_Comments", Model.CommentPaging)
 </div>
 
-@*<script type="text/javascript">
-    function OnSuccess(data) {
-        $(document).ready(function(){
-            var content = "";
-            $("#update").val(content);
-        });​
-    }
-    function OnFailure(request, error) {
-        alert("Fail");
-    }
-</script>*@
+<script type="text/javascript">
+    function OnBegin() {
+            $("#Comment").val('');
+        }
+</script>

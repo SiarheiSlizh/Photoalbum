@@ -17,12 +17,12 @@ namespace PLMvc.Controllers
     {
         private const int searchPageSize = 10;
         private const int photoPageSize = 3;
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
         private readonly IPhotoService photoService;
 
-        public HomeController(IUserService userService, IPhotoService photoService)
+        public HomeController(IAccountService accountService, IPhotoService photoService)
         {
-            this.userService = userService;
+            this.accountService = accountService;
             this.photoService = photoService;
         }
 
@@ -37,11 +37,8 @@ namespace PLMvc.Controllers
 
         public ActionResult UserPage()
         {
-            var user = userService.GetUserByUserName(HttpContext.User.Identity.Name).ToMvcUser();
-            var photos = photoService.GetByPaging(photoPageSize, 1, user.Id)?.MapToMvc();
-            var count = photoService.CountByUserId(user.Id);
-            var pageInfo = new PageInfo { PageNumber = 1, PageSize = photoPageSize, TotalItems = count };
-            var paging = new PhotosPaging { PageInfo = pageInfo, Photos = photos };
+            var user = accountService.GetUserByUserName(HttpContext.User.Identity.Name).ToMvcUser();
+            var paging = photoService.GetPhotosPaging(user.Id, photoPageSize, 1).ToMvcPhotosPaging();
 
             var mainPage = new UserPhotoViewModel
             {
@@ -55,8 +52,8 @@ namespace PLMvc.Controllers
         #region Search
         public ActionResult Search(string searchText)
         {
-            var users = userService.GetUsersBySubsrting(searchPageSize, 1, searchText).MapToMvc();
-            var countUsers = userService.CountBySubstring(searchText);
+            var users = accountService.GetUsersBySubsrting(searchPageSize, 1, searchText).MapToMvc();
+            var countUsers = accountService.CountBySubstring(searchText);
             var userPageInfo = new PageInfo { PageNumber = 1, PageSize = searchPageSize, TotalItems = countUsers };
 
             var usersList = new UsersPaging
@@ -72,8 +69,8 @@ namespace PLMvc.Controllers
         [HttpGet]
         public ActionResult PagingUsers(string searchText, int page = 1)
         {
-            var users = userService.GetUsersBySubsrting(searchPageSize, page, searchText).MapToMvc();
-            var countUsers = userService.CountBySubstring(searchText);
+            var users = accountService.GetUsersBySubsrting(searchPageSize, page, searchText).MapToMvc();
+            var countUsers = accountService.CountBySubstring(searchText);
             var userPageInfo = new PageInfo { PageNumber = page, PageSize = searchPageSize, TotalItems = countUsers };
 
             var usersList = new UsersPaging
@@ -91,15 +88,12 @@ namespace PLMvc.Controllers
 
         public ActionResult ShowUser(int userId)
         {
-            var user = userService.GetById(userId)?.ToMvcUser();
+            var user = accountService.GetByUserId(userId)?.ToMvcUser();
 
             if (user == null)
                 return HttpNotFound();
-
-            var photos = photoService.GetByPaging(photoPageSize, 1, userId).MapToMvc();
-            var count = photoService.CountByUserId(userId);
-            var pageInfo = new PageInfo { PageNumber = 1, PageSize = photoPageSize, TotalItems = count };
-            var paging = new PhotosPaging { PageInfo = pageInfo, Photos = photos };
+            
+            var paging = photoService.GetPhotosPaging(user.Id, photoPageSize, 1).ToMvcPhotosPaging();
 
             var mainPage = new UserPhotoViewModel
             {
@@ -112,7 +106,7 @@ namespace PLMvc.Controllers
 
         public ActionResult AutocompleteSearch(string term)
         {
-            var users = userService.GetUserBySubstring(term)
+            var users = accountService.GetUserBySubstring(term)
                 .MapToMvc()
                 .Select(u => new { value = u.UserName });
             

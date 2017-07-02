@@ -15,16 +15,16 @@
                 <div>
                     @if (Model.Avatar != null)
                     {
-                        <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(Model.Avatar))" class="avatar img-circle img-thumbnail" style="margin-left: 20%; width: 60%" alt="avatar" />
+                        <img src="@Url.Action("GetAvatar", "Photo", new { id = Model.Id })" class="avatar img-circle img-thumbnail" style="margin-left: 20%; width: 60%" alt="avatar" id="image" />
                     }
                     else {
-                        <img src="~/Images/default-avatar.png" class="avatar img-circle img-thumbnail" style="margin-left: 20%; width: 60%" alt="avatar"/>
+                        <img src="~/Images/default-avatar.png" class="avatar img-circle img-thumbnail" style="margin-left: 20%; width: 60%" alt="avatar" id="image"/>
                     }
                     <p><br /></p>
                     <div class="text-center">
                         <label for="upload" class="btn btn-large btn-primary">
                         Upload
-                        <input type="file" id="upload" name="upload" class="hidden" />
+                        <input type="file" accept="image/*" id="upload" name="upload" class="hidden" />
                         </label>
                     </div>
                 </div>
@@ -101,3 +101,31 @@
         </div>
     </div>
 }
+
+<script type="text/javascript">
+    function readURL(input) {
+        var file = input.files[0];
+        var size = 2097152;
+
+        function errMsg(x) {
+            alert(x);
+        }
+
+        if (file.size > size) {
+            errMsg('Size of the photo can\'t be larger than 2 Mb');
+            return false;
+        } else if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#image').attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#upload").change(function () {
+        readURL(this);
+    });
+</script>

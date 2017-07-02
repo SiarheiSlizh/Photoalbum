@@ -1,34 +1,33 @@
-﻿using System;
+﻿using BLL.Interfacies.Entities;
+using BLL.Interfacies.Services;
+using BLL.Mappers;
+using DAL.Interfacies.Repository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BLL.Interfacies.Entities;
-using BLL.Interfacies.Services;
-using DAL.Interfacies.Repository;
-using BLL.Mappers;
 
 namespace BLL.Services
 {
-    /// <summary>
-    /// Service which contains main operations with user entity
-    /// </summary>
-    public class UserService : IUserService
+    public class AccountService : IAccountService
     {
         #region fields
         private readonly IUnitOfWork uow;
         private readonly IUserRepository userRepository;
+        private readonly IRoleRepository roleRepository;
         #endregion
 
         #region ctor
-        public UserService(IUnitOfWork uow, IUserRepository userRepository)
+        public AccountService(IUnitOfWork uow, IUserRepository userRepository, IRoleRepository roleRepository)
         {
             this.uow = uow;
             this.userRepository = userRepository;
+            this.roleRepository = roleRepository;
         }
         #endregion
 
-        #region public fields
+        #region user's public methods
         /// <summary>
         /// check if email has already existed in database 
         /// </summary>
@@ -65,7 +64,7 @@ namespace BLL.Services
         /// </summary>
         /// <param name="userId">user identifier</param>
         /// <returns>user entity on BLL</returns>
-        public BllUser GetById(int userId)
+        public BllUser GetByUserId(int userId)
         {
             return userRepository.GetById(userId)?.ToBllUser();
         }
@@ -93,10 +92,10 @@ namespace BLL.Services
         }
 
         /// <summary>
-        /// 
+        /// find user by username
         /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
+        /// <param name="userName">username</param>
+        /// <returns>user entity</returns>
         public BllUser GetUserByUserName(string userName)
         {
             return userRepository.GetUserByUserName(userName)?.ToBllUser();
@@ -130,6 +129,48 @@ namespace BLL.Services
         public IEnumerable<BllUser> GetUserBySubstring(string substring)
         {
             return userRepository.GetUserBySubstring(substring).MapToBll();
+        }
+        #endregion
+
+        #region role's public methods
+        /// <summary>
+        /// find photo entity using identifier
+        /// </summary>
+        /// <param name="key">role identifier</param>
+        /// <returns>role entity on BLL</returns>
+        public BllRole GetByRoleId(int key)
+        {
+            return roleRepository.GetById(key)?.ToBllRole();
+        }
+
+        /// <summary>
+        /// find all roles in database
+        /// </summary>
+        /// <returns>roles</returns>
+        public IEnumerable<BllRole> GetAll()
+        {
+            return roleRepository.GetAll().MapToBll();
+        }
+
+        /// <summary>
+        /// check if user has definite role
+        /// </summary>
+        /// <param name="userName">username</param>
+        /// <param name="roleName">name of role</param>
+        /// <returns>true in case positive results else false</returns>
+        public bool IsUserInRole(string userName, string roleName)
+        {
+            return roleRepository.IsUserInRole(userName, roleName);
+        }
+
+        /// <summary>
+        /// create new role entity
+        /// </summary>
+        /// <param name="role">role entity on BLL</param>
+        public void CreateRole(BllRole role)
+        {
+            roleRepository.Create(role.ToDalRole());
+            uow.Commit();
         }
         #endregion
     }
